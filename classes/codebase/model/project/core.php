@@ -3,7 +3,7 @@
  * Codebase_Model_Project_Core class, an instance of this class represents a
  * Codebase project, this class also contains static methods used to make a
  * request to the Codebase API, parse the result and return an instance of
- * itself with the data returned from the API.
+ * Codebase_Model_Project with the data returned from the API.
  *
  * @author		Jon Cotton <jon@rpacode.co.uk>
  * @copyright	(c) 2011 RPA Code
@@ -30,6 +30,13 @@ class Codebase_Model_Project_Core extends Codebase_Model
 	 * @var array
 	 */
 	protected $tickets = NULL;
+
+	/**
+	 * Holds the statuses belonging to this project
+	 *
+	 * @var array
+	 */
+	protected $statuses = NULL;
 
 	/**
 	 * static function to return all projects belonging to the Codebase account
@@ -69,6 +76,21 @@ class Codebase_Model_Project_Core extends Codebase_Model
 		}
 
 		return $this->tickets;
+	}
+
+	/**
+	 * Returns all statuses belonging to the project
+	 *
+	 * @return	array	A collection Codebase_Model_Status objects
+	 */
+	public function get_statuses()
+	{
+		if($this->statuses === NULL)
+		{
+			$this->statuses = Codebase_Model_Status::get_statuses_for_project($this->get_request(), $this->get_permalink());
+		}
+
+		return $this->statuses;
 	}
 
 }

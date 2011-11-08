@@ -27,6 +27,15 @@ abstract class Codebase_Core
 	private $request = NULL;
 
 	/**
+	 * A collection of Codebase_Model_Objects retrieved by this object
+	 *
+	 * @var		array
+	 * @access	protected
+	 */
+	protected $projects = NULL;
+
+
+	/**
 	 * Constructor
 	 *
 	 * @param	string		$username	The Codebase username in the format of account/username
@@ -50,9 +59,39 @@ abstract class Codebase_Core
 		$this->set_request($request);
 	}
 
+	/**
+	 * Retrieves all projects associated with the codebase account specified by
+	 * the credentials in the request object
+	 *
+	 * @return	array	A collection of Codebase_Model_Project objects
+	 */
 	public function get_all_projects()
 	{
-		return Codebase_Model_Project::get_all_projects($this->get_request());
+		if($this->projects === NULL)
+		{
+			$this->projects = Codebase_Model_Project::get_all_projects($this->get_request());
+		}
+
+		return $this->projects;
+	}
+
+	/**
+	 * Retrieves all tickets associated with the codebase account specified by
+	 * the credentials in the request object
+	 *
+	 * @return	array	A collection of Codebase_Model_Ticket objects
+	 */
+	public function get_all_tickets()
+	{
+		$tickets = array();
+
+		$projects = $this->get_all_projects();
+		foreach($projects as $project)
+		{
+			$tickets = array_merge($tickets, $project->get_tickets());
+		}
+
+		return $tickets;
 	}
 
 	/**
@@ -66,12 +105,12 @@ abstract class Codebase_Core
 	}
 
 	/**
-	 * Setter for the $request property
+	 * Setter for the $request property (read only)
 	 *
-	 * @access	public
+	 * @access	protected
 	 * @param	Codebase_Request	$request	An instance of Codebase_Request
 	 */
-	public function set_request(Codebase_Request $request) {
+	protected function set_request(Codebase_Request $request) {
 		$this->request = $request;
 	}
 

@@ -16,6 +16,16 @@
  */
 abstract class Codebase_Model_Core
 {
+
+	/**
+	 * An instance of Codebase_Request, used to make all requests to the
+	 * Codebase API
+	 *
+	 * @var		Codebase_Request
+	 * @access	protected
+	 */
+	protected $request = NULL;
+
 	/**
 	 * Constructor
 	 *
@@ -24,6 +34,8 @@ abstract class Codebase_Model_Core
 	 */
 	public function __construct(Codebase_Request $request, Array $inflate_data = NULL)
 	{
+		$this->set_request($request);
+
 		if($inflate_data !== NULL)
 		{
 			$this->inflate($inflate_data);
@@ -51,29 +63,6 @@ abstract class Codebase_Model_Core
 		// check for errors?
 
 		return $parsed_result;
-	}
-
-	/**
-	 * Static getter for the $Codebase_uri static var
-	 *
-	 * @static
-	 * @access	public
-	 */
-	public static function get_uri()
-	{
-		return self::$codebase_uri;
-	}
-
-	/**
-	 * Static setter for the $Codebase_uri static var
-	 *
-	 * @param	string	$uri
-	 * @static
-	 * @access	public
-	 */
-	public static function set_uri($uri)
-	{
-		self::$codebase_uri = $uri;
 	}
 
 	/**
@@ -141,6 +130,26 @@ abstract class Codebase_Model_Core
 		{
 			throw new Exception('Call to undefined method: '.get_class($this).'::'.$name);
 		}
+	}
+
+	/**
+	 * Getter for the $request property
+	 *
+	 * @access	public
+	 * @return	Codebase_Request
+	 */
+	public function get_request() {
+		return $this->request;
+	}
+
+	/**
+	 * Setter for the $request property
+	 *
+	 * @access	public
+	 * @param	Codebase_Request	$request	An instance of Codebase_Request
+	 */
+	public function set_request(Codebase_Request $request) {
+		$this->request = $request;
 	}
 
 }

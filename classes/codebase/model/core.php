@@ -32,7 +32,7 @@ abstract class Codebase_Model_Core
 	 * @param	array	$inflate_data	The data to inflate the object with
 	 * @access	public
 	 */
-	public function __construct(Codebase_Request $request, Array $inflate_data = NULL)
+	public function __construct(Codebase_Request $request, SimpleXMLElement $inflate_data = NULL)
 	{
 		$this->set_request($request);
 
@@ -77,10 +77,10 @@ abstract class Codebase_Model_Core
 	{
 		foreach($data as $property_name => $value)
 		{
-			// Codebase XML tags contain hyphens, replace them with underscores
+			// Codebase XML element names contain hyphens, replace them with underscores
 			$property_name = str_replace('-', '_', $property_name);
 			$method_name = 'set_'.$property_name;
-			$this->{$method_name}($value);
+			$this->{$method_name}((string)$value);
 		}
 	}
 

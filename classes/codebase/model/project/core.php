@@ -25,13 +25,13 @@ class Codebase_Model_Project_Core extends Codebase_Model
 	{
 		$projects = array();
 
-		$response = $request->get('/projects');
-
+		$response = $request->get('/projects', array());
 		$response_data = self::parse_response($response);
 
-		foreach($response_data->projects as $project_data)
+		foreach($response_data as $project_data)
 		{
-			$projects[] = new self($request, $response_data);
+			// TODO: Shouldn't have to reference the child class here, should just be 'self' but need PHP 5.3 and Late Static Binding to achieve this
+			$projects[] = new Codebase_Model_Project($request, $project_data);
 		}
 
 		return $projects;

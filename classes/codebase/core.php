@@ -29,11 +29,12 @@ abstract class Codebase_Core
 	/**
 	 * Constructor
 	 *
-	 * @param	string	$username	The Codebase username in the format of account/username
-	 * @param	string	$api_key	The Codebase API key
+	 * @param	string		$username	The Codebase username in the format of account/username
+	 * @param	string		$api_key	The Codebase API key
+	 * @param	HTTP_Cache	$cache		A HTTP_cache instance that will be used by any requests made to the Codebase API
 	 * @access	public
 	 */
-	public function __construct($username, $api_key, $secure = TRUE)
+	public function __construct($username, $api_key, $secure = TRUE, HTTP_Cache $cache)
 	{
 		if($secure)
 		{
@@ -45,7 +46,7 @@ abstract class Codebase_Core
 		}
 		$api_uri = $protocol.'://'.self::API_URI;
 
-		$request = new Codebase_Request($api_uri, $username, $api_key);
+		$request = new Codebase_Request($api_uri, $username, $api_key, $cache);
 		$this->set_request($request);
 	}
 

@@ -3,7 +3,7 @@
  * Codebase_Model_Ticket_Core class, an instance of this class represents a
  * Codebase ticket, this class also contains static methods used to make a
  * request to the Codebase API, parse the result and return an instance of
- * itself with the data returned from the API.
+ * Codebase_Model_Ticket with the data returned from the API.
  *
  * @author		Jon Cotton <jon@rpacode.co.uk>
  * @copyright	(c) 2011 RPA Code

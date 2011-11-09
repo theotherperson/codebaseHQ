@@ -77,6 +77,46 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 		$this->project = $project;
 	}
 
+	/**
+	 * getter for the status property
+	 *
+	 * @return	Codebase_Model_Status
+	 */
+	public function get_status() {
+		if(!$this->status instanceOf Codebase_Model_Status)
+		{
+			$statuses = $this->get_project()->get_statuses();
+			foreach($statuses as $status)
+			{
+				if($status->get_id() == $this->get_status_id())
+				{
+					$this->set_status($status);
+				}
+			}
+		}
 
+		return $this->status;
+	}
+
+	/**
+	 * getter for the assignee property
+	 *
+	 * @return	Codebase_Model_Assignee
+	 */
+	public function get_assignee() {
+		if(!$this->assignee instanceOf Codebase_Model_Assignee)
+		{
+			$assignees = $this->get_project()->get_assignees();
+			foreach($assignees as $assignee)
+			{
+				if($assignee->get_id() == $this->get_assignee_id())
+				{
+					$this->set_assignee($assignee);
+				}
+			}
+		}
+
+		return $this->assignee;
+	}
 
 }

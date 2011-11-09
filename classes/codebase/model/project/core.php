@@ -53,6 +53,13 @@ class Codebase_Model_Project_Core extends Codebase_Model
 	protected $assignees = NULL;
 
 	/**
+	 * The time sessions belonging to this project
+	 *
+	 * @var array
+	 */
+	protected $sessions = NULL;
+
+	/**
 	 * static function to return all projects belonging to the Codebase account
 	 * as specified in the request object.
 	 *
@@ -79,6 +86,12 @@ class Codebase_Model_Project_Core extends Codebase_Model
 		if($this->tickets === NULL)
 		{
 			$this->tickets = Codebase_Model_Ticket::get_tickets_for_project($this->get_request(), $this->get_permalink());
+		}
+
+		// add a reference back to self
+		foreach($this->tickets as $ticket)
+		{
+			$ticket->set_project($this);
 		}
 
 		return $this->tickets;
@@ -127,6 +140,21 @@ class Codebase_Model_Project_Core extends Codebase_Model
 		}
 
 		return $this->assignees;
+	}
+
+	/**
+	 * Returns all sessions belonging to the project
+	 *
+	 * @return	array	A collection Codebase_Model_Session objects
+	 */
+	public function get_sessions()
+	{
+		if($this->sessions === NULL)
+		{
+			$this->sessions = Codebase_Model_Session::get_sessions_for_project($this->get_request(), $this->get_permalink());
+		}
+
+		return $this->sessions;
 	}
 
 }

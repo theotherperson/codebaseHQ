@@ -46,6 +46,13 @@ class Codebase_Model_Project_Core extends Codebase_Model
 	protected $milestones = NULL;
 
 	/**
+	 * The assignees belonging to this project
+	 *
+	 * @var array
+	 */
+	protected $assignees = NULL;
+
+	/**
 	 * static function to return all projects belonging to the Codebase account
 	 * as specified in the request object.
 	 *
@@ -105,6 +112,21 @@ class Codebase_Model_Project_Core extends Codebase_Model
 		}
 
 		return $this->milestones;
+	}
+
+	/**
+	 * Returns all assignees belonging to the project
+	 *
+	 * @return	array	A collection Codebase_Model_Assignee objects
+	 */
+	public function get_assignees()
+	{
+		if($this->assignees === NULL)
+		{
+			$this->assignees = Codebase_Model_Assignee::get_assignees_for_project($this->get_request(), $this->get_permalink());
+		}
+
+		return $this->assignees;
 	}
 
 }

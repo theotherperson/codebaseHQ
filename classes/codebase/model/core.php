@@ -133,6 +133,47 @@ abstract class Codebase_Model_Core
 	}
 
 	/**
+	 * static function to return objects of the specified class at the specified
+	 * API path, shouldn't be used directly but rather implemented by child
+	 * classes.
+	 *
+	 * @param	Codebase_Request	$request
+	 * @param	string				$class_name							The class of the objects to instantiate and return
+	 * @param	string				$path								The uri path to make the Codebase API call to
+	 * @return	array				A collection Codebase_Model objects
+	 * @static
+	 * @access	protected
+	 */
+	protected static function get_objects_for_path(Codebase_Request $request, $class_name, $path)
+	{
+		// check that the supplied class name is a sub class of Codebase_Model (and therefore this class)
+		if(!is_subclass_of($class_name, 'Codebase_Model'))
+		{
+			throw new Codebase_Exception('The supplied class name must be a sub class of Codebase_Model');
+		}
+
+		$objects = array();
+
+		try
+		{
+			$response = $request->get($path);
+			$response_data = self::parse_response($response);
+
+			foreach($response_data as $object_data)
+			{
+				$objects[] = new $class_name($request, $object_data);
+			}
+		}
+		catch(Codebase_Exception $e)
+		{
+			// something went wrong with the request
+			$objects = array();
+		}
+
+		return $objects;
+	}
+
+	/**
 	 * Getter for the $request property
 	 *
 	 * @access	public

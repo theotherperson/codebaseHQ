@@ -34,26 +34,10 @@ class Codebase_Model_Status_Core extends Codebase_Model
 	 */
 	public static function get_statuses_for_project(Codebase_Request $request, $project_permalink)
 	{
-		$statuses = array();
+		$path = '/'.$project_permalink.'/tickets/statuses';
 
-		try
-		{
-			$response = $request->get('/'.$project_permalink.'/tickets/statuses');
-			$response_data = self::parse_response($response);
-
-			foreach($response_data as $status_data)
-			{
-				// TODO: Shouldn't have to reference the child class here, should just be 'self' but need PHP 5.3 and Late Static Binding to achieve this
-				$statuses[] = new Codebase_Model_Status($request, $status_data);
-			}
-		}
-		catch(Codebase_Exception $e)
-		{
-			// something went wrong with the request
-			$statuses = array();
-		}
-
-		return $statuses;
+		// TODO: Shouldn't have to specify the child class here, should just be 'self' but need PHP 5.3 and Late Static Binding to achieve this
+		return self::get_objects_for_path($request, 'Codebase_Model_Status', $path);
 	}
 
 }

@@ -46,26 +46,10 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 	 */
 	public static function get_tickets_for_project(Codebase_Request $request, $project_permalink)
 	{
-		$tickets = array();
+		$path = '/'.$project_permalink.'/tickets';
 
-		try
-		{
-			$response = $request->get('/'.$project_permalink.'/tickets');
-			$response_data = self::parse_response($response);
-
-			foreach($response_data as $ticket_data)
-			{
-				// TODO: Shouldn't have to reference the child class here, should just be 'self' but need PHP 5.3 and Late Static Binding to achieve this
-				$tickets[] = new Codebase_Model_Ticket($request, $ticket_data);
-			}
-		}
-		catch(Codebase_Exception $e)
-		{
-			// something went wrong with the request, most likely there are no tickets associated with the project
-			$tickets = array();
-		}
-
-		return $tickets;
+		// TODO: Shouldn't have to specify the child class here, should just be 'self' but need PHP 5.3 and Late Static Binding to achieve this
+		return self::get_objects_for_path($request, 'Codebase_Model_Ticket', $path);
 	}
 
 }

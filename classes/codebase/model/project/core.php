@@ -25,18 +25,25 @@ class Codebase_Model_Project_Core extends Codebase_Model
 	protected $status = NULL;
 
 	/**
-	 * Holds the tickets belonging to this project
+	 * The tickets belonging to this project
 	 *
 	 * @var array
 	 */
 	protected $tickets = NULL;
 
 	/**
-	 * Holds the statuses belonging to this project
+	 * The statuses belonging to this project
 	 *
 	 * @var array
 	 */
 	protected $statuses = NULL;
+
+	/**
+	 * The milestones belonging to this project
+	 *
+	 * @var array
+	 */
+	protected $milestones = NULL;
 
 	/**
 	 * static function to return all projects belonging to the Codebase account
@@ -49,18 +56,10 @@ class Codebase_Model_Project_Core extends Codebase_Model
 	 */
 	public static function get_all_projects(Codebase_Request $request)
 	{
-		$projects = array();
+		$path = '/projects';
 
-		$response = $request->get('/projects');
-		$response_data = self::parse_response($response);
-
-		foreach($response_data as $project_data)
-		{
-			// TODO: Shouldn't have to reference the child class here, should just be 'self' but need PHP 5.3 and Late Static Binding to achieve this
-			$projects[] = new Codebase_Model_Project($request, $project_data);
-		}
-
-		return $projects;
+		// TODO: Shouldn't have to specify the child class here, should just be 'self' but need PHP 5.3 and Late Static Binding to achieve this
+		return self::get_objects_for_path($request, 'Codebase_Model_Project', $path);
 	}
 
 	/**
@@ -91,6 +90,21 @@ class Codebase_Model_Project_Core extends Codebase_Model
 		}
 
 		return $this->statuses;
+	}
+
+	/**
+	 * Returns all milestones belonging to the project
+	 *
+	 * @return	array	A collection Codebase_Model_Milestone objects
+	 */
+	public function get_milestones()
+	{
+		if($this->milestones === NULL)
+		{
+			$this->milestones = Codebase_Model_Milestone::get_milestones_for_project($this->get_request(), $this->get_permalink());
+		}
+
+		return $this->milestones;
 	}
 
 }

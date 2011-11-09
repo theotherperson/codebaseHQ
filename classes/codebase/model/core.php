@@ -7,11 +7,6 @@
  *
  * @author		Jon Cotton <jon@rpacode.co.uk>
  * @copyright	(c) 2011 RPA Code
- * @version		1.0
- * @uses		Kohana_XML (https://github.com/ccazette/Kohana_XML)
- * @uses		Request_Client_External
- * @uses		Request
- * @uses		Response
  * @abstract
  */
 abstract class Codebase_Model_Core

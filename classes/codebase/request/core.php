@@ -15,34 +15,44 @@ class Codebase_Request_Core
 	 * The Codebase API URI
 	 *
 	 * @var		string
-	 * @access	private
+	 * @access	protected
 	 */
-	private $api_uri = NULL;
+	protected $api_uri = NULL;
 
 	/**
 	 * The Codebase username in the format of account/username
 	 *
 	 * @var		string
-	 * @access	private
+	 * @access	protected
 	 */
-	private $username = NULL;
+	protected $username = NULL;
 
 	/**
 	 * The Codebase API key
 	 *
 	 * @var		string
-	 * @access	private
+	 * @access	protected
 	 */
-	private $api_key = NULL;
+	protected $api_key = NULL;
 
 	/**
 	 * A cache object to be used by any requests generated, can be overriden
 	 * when the request is made
 	 *
 	 * @var		HTTP_Cache
-	 * @access	private
+	 * @access	protected
 	 */
-	private $cache = NULL;
+	protected $cache = NULL;
+
+	/**
+	 * The parameters to send with the request, if a GET request, the params
+	 * will be added to the query string, if POST, the params are sent as post
+	 * params in the header
+	 *
+	 * @var		array
+	 * @access	protected
+	 */
+	protected $params = array();
 
 	/**
 	 * Constructor
@@ -50,15 +60,30 @@ class Codebase_Request_Core
 	 * @param	string		$api_uri	The Codebase API URI
 	 * @param	string		$username	The Codebase username in the format of account/username
 	 * @param	string		$api_key	The Codebase API key
+	 * @param	boolean		$secure		True if the connection to the Codebase API should be made over https, false otherwise
 	 * @param	HTTP_Cache	$cache		A HTTP_cache instance that will be used by any requests made to the Codebase API, can be overriden at the time of request
 	 * @access	public
 	 */
-	public function __construct($api_uri, $username, $api_key, HTTP_Cache $cache = NULL)
+	public function __construct($api_uri, $username, $api_key, $secure = TRUE, HTTP_Cache $cache = NULL)
 	{
-		$this->set_api_uri($api_uri);
+		if($secure)
+		{
+			$protocol = 'https';
+		}
+		else
+		{
+			$protocol = 'http';
+		}
+		$full_api_uri = $protocol.'://'.$api_uri;
+
+		$this->set_api_uri($full_api_uri);
 		$this->set_username($username);
 		$this->set_api_key($api_key);
-		$this->set_cache($cache);
+
+		if($cache !== NULL)
+		{
+			$this->set_cache($cache);
+		}
 	}
 
 	/**
@@ -137,6 +162,11 @@ class Codebase_Request_Core
 		$request->headers('Accept', $xml_mime_type);
 		$request->headers('Content-type', $xml_mime_type);
 
+		if(empty($params))
+		{
+			$params = $this->get_params();
+		}
+
 		if($method == Request::GET)
 		{
 			$request->query($params);
@@ -170,7 +200,7 @@ class Codebase_Request_Core
 	 * Setter for the $api_uri property
 	 *
 	 * @access	public
-	 * @param	string	$api_uri	The Codebase API URI
+	 * @param	string		$api_uri	The Codebase API URI
 	 */
 	public function set_api_uri($api_uri)
 	{
@@ -192,7 +222,7 @@ class Codebase_Request_Core
 	 * Setter for the $username property
 	 *
 	 * @access	public
-	 * @param	string	$username	The Codebase username
+	 * @param	string		$username	The Codebase username
 	 */
 	public function set_username($username)
 	{
@@ -214,7 +244,7 @@ class Codebase_Request_Core
 	 * Setter for the $api_key property
 	 *
 	 * @access	public
-	 * @param	string	$api_key	The Codebase API key
+	 * @param	string		$api_key	The Codebase API key
 	 */
 	public function set_api_key($api_key)
 	{
@@ -239,6 +269,37 @@ class Codebase_Request_Core
 	 */
 	public function set_cache(HTTP_Cache $cache) {
 		$this->cache = $cache;
+	}
+
+	/**
+	 * Getter for the $params property
+	 *
+	 * @access	public
+	 * @return	array
+	 */
+	public function get_params() {
+		return $this->params;
+	}
+
+	/**
+	 * Setter for the $cache property
+	 *
+	 * @access	public
+	 * @param	array		$params
+	 */
+	public function set_params(array $params) {
+		$this->params = $params;
+	}
+
+	/**
+	 * Adds an element to the $params property
+	 *
+	 * @access	public
+	 * @param	string		$key
+	 * @param	mixed		$value
+	 */
+	public function add_param($key, $value) {
+		$this->params[$key] = $value;
 	}
 
 }

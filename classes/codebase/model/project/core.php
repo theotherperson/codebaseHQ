@@ -124,6 +124,12 @@ class Codebase_Model_Project_Core extends Codebase_Model
 			$this->milestones = Codebase_Model_Milestone::get_milestones_for_project($this->get_request(), $this->get_permalink());
 		}
 
+		// add a reference back to self
+		foreach($this->milestones as $milestone)
+		{
+			$milestone->set_project($this);
+		}
+
 		return $this->milestones;
 	}
 

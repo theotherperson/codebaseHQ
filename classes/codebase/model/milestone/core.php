@@ -25,6 +25,13 @@ class Codebase_Model_Milestone_Core extends Codebase_Model
 	protected $responsible_user_id = NULL;
 
 	/**
+	 * The project that this milestone belongs to
+	 *
+	 * @var		Codebase_Model_Project
+	 */
+	protected $project = NULL;
+
+	/**
 	 * static function to return all milestones belonging to the specified project
 	 *
 	 * @param	Codebase_Request	$request
@@ -39,6 +46,24 @@ class Codebase_Model_Milestone_Core extends Codebase_Model
 
 		// TODO: Shouldn't have to specify the child class here, should just be 'self' but need PHP 5.3 and Late Static Binding to achieve this
 		return self::get_objects_for_path($request, 'Codebase_Model_Milestone', $path);
+	}
+
+	/**
+	 * getter for the project property
+	 *
+	 * @return	Codebase_Model_Project
+	 */
+	public function get_project() {
+		return $this->project;
+	}
+
+	/**
+	 * setter for the project property
+	 *
+	 * @param	Codebase_Model_Project	$project
+	 */
+	public function set_project(Codebase_Model_Project $project) {
+		$this->project = $project;
 	}
 
 }

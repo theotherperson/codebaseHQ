@@ -131,6 +131,17 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 
 	public function get_ordinal()
 	{
+		$ordinal = 0;
+
+		/**
+		 * tested tickets are lowest priority, as the only work required on them
+		 * is deployment
+		 */
+		if($this->get_status()->get_name() == 'Tested')
+		{
+			return $ordinal;
+		}
+
 		$score_priority_critical = 999;
 		$score_type_bug = 100;
 		$score_priority_high = 100;
@@ -142,8 +153,6 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 		$score_milestone_due_3_weeks = 30;
 		$score_milestone_due_2_weeks = 60;
 		$score_milestone_due_1_week = 100;
-
-		$ordinal = 0;
 
 		// priority
 		switch(strtolower($this->get_priority()->get_name()))

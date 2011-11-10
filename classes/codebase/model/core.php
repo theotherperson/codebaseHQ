@@ -70,12 +70,35 @@ abstract class Codebase_Model_Core
 	 */
 	public function inflate(SimpleXMLElement $data)
 	{
+		$object_element_map = array(
+			'status' => 'Codebase_Model_Status',
+			'assignee' => 'Codebase_Model_Assignee'
+		);
+		$elements_to_instantiate = array_keys($object_element_map);
+
 		foreach($data as $property_name => $value)
 		{
+			$new_value = NULL;
+
 			// Codebase XML element names contain hyphens, replace them with underscores
 			$property_name = str_replace('-', '_', $property_name);
 			$method_name = 'set_'.$property_name;
-			$this->{$method_name}((string)$value);
+
+			/**
+			 *  check to see if the element name exists within the
+			 *  object-element map, if it does, create a new instance of the
+			 *  mapped object with the element data
+			 */
+			if(in_array($property_name, $elements_to_instantiate) AND count($value) > 1)
+			{
+				$new_value = new $object_element_map[$property_name]($this->get_request(), $value);
+			}
+			else
+			{
+				$new_value = (string)$value;
+			}
+
+			$this->{$method_name}($new_value);
 		}
 	}
 

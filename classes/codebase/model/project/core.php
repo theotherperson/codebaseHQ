@@ -86,15 +86,39 @@ class Codebase_Model_Project_Core extends Codebase_Model
 		if($this->tickets === NULL)
 		{
 			$this->tickets = Codebase_Model_Ticket::get_tickets_for_project($this->get_request(), $this->get_permalink());
-		}
 
-		// add a reference back to self
-		foreach($this->tickets as $ticket)
-		{
-			$ticket->set_project($this);
+			// add a reference back to self
+			foreach($this->tickets as $ticket)
+			{
+				$ticket->set_project($this);
+			}
 		}
 
 		return $this->tickets;
+	}
+
+	/**
+	 * Returns all tickets belonging to the project that are the specified
+	 * status
+	 *
+	 * @param	string	$status_name
+	 * @return	array	A collection Codebase_Model_Ticket objects
+	 */
+	public function get_tickets_by_status($status_name)
+	{
+		$filtered_tickets = array();
+
+		$tickets = $this->get_tickets();
+
+		foreach($tickets as $ticket)
+		{
+			if($ticket->get_status()->get_name() == $status_name)
+			{
+				$filtered_tickets[] = $ticket;
+			}
+		}
+
+		return $filtered_tickets;
 	}
 
 	/**

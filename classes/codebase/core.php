@@ -86,6 +86,27 @@ abstract class Codebase_Core
 	}
 
 	/**
+	 * Retrieves all tickets associated with the codebase account specified by
+	 * the credentials in the request object, only returns tickets that are of
+	 * the specified status
+	 *
+	 * @param	string	$status_name
+	 * @return	array	A collection of Codebase_Model_Ticket objects
+	 */
+	public function get_all_tickets_by_status($status_name)
+	{
+		$tickets = array();
+
+		$projects = $this->get_all_projects();
+		foreach($projects as $project)
+		{
+			$tickets = array_merge($tickets, $project->get_tickets_by_status($status_name));
+		}
+
+		return $tickets;
+	}
+
+	/**
 	 * Getter for the $request property
 	 *
 	 * @access	public

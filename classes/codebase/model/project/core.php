@@ -122,6 +122,28 @@ class Codebase_Model_Project_Core extends Codebase_Model
 	}
 
 	/**
+	 * Returns all tickets belonging to the project that have an open status
+	 *
+	 * @return	array	A collection Codebase_Model_Ticket objects
+	 */
+	public function get_open_tickets()
+	{
+		$filtered_tickets = array();
+
+		$tickets = $this->get_tickets();
+
+		foreach($tickets as $ticket)
+		{
+			if($ticket->is_open())
+			{
+				$filtered_tickets[] = $ticket;
+			}
+		}
+
+		return $filtered_tickets;
+	}
+
+	/**
 	 * Returns all statuses belonging to the project
 	 *
 	 * @return	array	A collection Codebase_Model_Status objects

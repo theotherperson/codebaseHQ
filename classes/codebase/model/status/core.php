@@ -40,4 +40,22 @@ class Codebase_Model_Status_Core extends Codebase_Model
 		return self::get_objects_for_path($request, 'Codebase_Model_Status', $path);
 	}
 
+	/**
+	 * setter for boolean treat_as_closed property, overriden here so that the
+	 * value can be converted to a boolean
+	 *
+	 * @param	mixed	$treat_as_closed
+	 */
+	public function set_treat_as_closed($treat_as_closed)
+	{
+		$value = FALSE;
+
+		if($treat_as_closed == 'true' OR $treat_as_closed === TRUE OR $treat_as_closed === 1)
+		{
+			$value = TRUE;
+		}
+
+		$this->treat_as_closed = $value;
+	}
+
 }

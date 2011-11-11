@@ -129,30 +129,42 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 		return !$this->get_status()->get_treat_as_closed();
 	}
 
+	/**
+	 * returns true if the ticket has a critical priority
+	 *
+	 * @return	boolean
+	 */
+	public function is_critical()
+	{
+		return ($this->get_priority()->get_name() == 'Critical');
+	}
+
 	public function get_ordinal()
 	{
 		$ordinal = 0;
 
 		/**
 		 * tested tickets are lowest priority, as the only work required on them
-		 * is deployment
+		 * is deployment but they should still rise up the list as the release
+		 * date draws closer
 		 */
 		if($this->get_status()->get_name() == 'Tested')
 		{
-			return $ordinal;
+			$ordinal -= 100;
 		}
 
 		$score_priority_critical = 999;
 		$score_type_bug = 100;
 		$score_priority_high = 100;
 		$score_type_question = 90;
-		$score_type_change = $score_type_task = 50;
+		$score_type_change = 50;
+		$score_type_task = 50;
 		$score_priority_normal = 50;
 		$score_priority_low = 10;
 		$score_milestone_due_4_weeks = 10;
-		$score_milestone_due_3_weeks = 30;
-		$score_milestone_due_2_weeks = 60;
-		$score_milestone_due_1_week = 100;
+		$score_milestone_due_3_weeks = 40;
+		$score_milestone_due_2_weeks = 90;
+		$score_milestone_due_1_week = 200;
 
 		// priority
 		switch(strtolower($this->get_priority()->get_name()))

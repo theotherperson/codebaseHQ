@@ -73,7 +73,8 @@ abstract class Codebase_Model_Core
 		$object_element_map = array(
 			'status' => 'Codebase_Model_Status',
 			'assignee' => 'Codebase_Model_Assignee',
-			'priority' => 'Codebase_Model_Priority'
+			'priority' => 'Codebase_Model_Priority',
+			'category' => 'Codebase_Model_Category'
 		);
 		$elements_to_instantiate = array_keys($object_element_map);
 

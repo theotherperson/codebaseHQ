@@ -82,6 +82,9 @@ abstract class Codebase_Core
 			$tickets = array_merge($tickets, $project->get_tickets());
 		}
 
+		// sort the tickets into priority order
+		usort($tickets, 'Codebase_Model_Ticket::sort');
+
 		return $tickets;
 	}
 
@@ -100,6 +103,9 @@ abstract class Codebase_Core
 		{
 			$tickets = array_merge($tickets, $project->get_open_tickets());
 		}
+
+		// sort the tickets into priority order
+		usort($tickets, 'Codebase_Model_Ticket::sort');
 
 		return $tickets;
 	}
@@ -122,7 +128,56 @@ abstract class Codebase_Core
 			$tickets = array_merge($tickets, $project->get_tickets_by_status($status_name));
 		}
 
+		// sort the tickets into priority order
+		usort($tickets, 'Codebase_Model_Ticket::sort');
+
 		return $tickets;
+	}
+
+	/**
+	 * Retrieves all tickets associated with the codebase account specified by
+	 * the credentials in the request object, only returns tickets that are of
+	 * the specified type
+	 *
+	 * @param	string	$type_name
+	 * @return	array	A collection of Codebase_Model_Ticket objects
+	 */
+	public function get_all_tickets_by_type($type_name)
+	{
+		$tickets = array();
+
+		$projects = $this->get_all_projects();
+		foreach($projects as $project)
+		{
+			$tickets = array_merge($tickets, $project->get_tickets_by_type($type_name));
+		}
+
+		// sort the tickets into priority order
+		usort($tickets, 'Codebase_Model_Ticket::sort');
+
+		return $tickets;
+	}
+
+	/**
+	 * Retrieves all milestones associated with the codebase account specified
+	 * by the credentials in the request object
+	 *
+	 * @return	array	A collection of Codebase_Model_Milestone objects
+	 */
+	public function get_all_milestones()
+	{
+		$milestones = array();
+
+		$projects = $this->get_all_projects();
+		foreach($projects as $project)
+		{
+			$milestones = array_merge($milestones, $project->get_milestones());
+		}
+
+		// sort the milestones into priority order
+		usort($milestones, 'Codebase_Model_Milestone::sort');
+
+		return $milestones;
 	}
 
 	/**

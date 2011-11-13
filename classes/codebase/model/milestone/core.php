@@ -66,4 +66,28 @@ class Codebase_Model_Milestone_Core extends Codebase_Model
 		$this->project = $project;
 	}
 
+	/**
+	 * a function that is passed to PHP's usort function in order to determine
+	 * the correct order of an array of milestone objects
+	 *
+	 * @param	Codebase_Model_Milestone	$a
+	 * @param	Codebase_Model_Milestone	$b
+	 * @return	type
+	 * @static
+	 */
+	public static function sort(Codebase_Model_Milestone $a, Codebase_Model_Milestone $b)
+	{
+		$return_value = 0;
+
+		$a_deadline = strtotime($a->get_deadline());
+		$b_deadline = strtotime($b->get_deadline());
+
+		if($a_deadline != $b_deadline)
+		{
+			$return_value = ($a_deadline < $b_deadline) ? -1 : 1;
+		}
+
+		return $return_value;
+	}
+
 }

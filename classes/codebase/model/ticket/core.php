@@ -53,16 +53,23 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 	 */
 	public static function get_tickets_for_project(Codebase_Request $request, $project_permalink)
 	{
+		$tickets = array();
 		$path = '/'.$project_permalink.'/tickets';
 
 		// TODO: Shouldn't have to specify the child class here, should just be 'self' but need PHP 5.3 and Late Static Binding to achieve this
-		return self::get_objects_for_path($request, 'Codebase_Model_Ticket', $path);
+		$tickets = self::get_objects_for_path($request, 'Codebase_Model_Ticket', $path);
+
+		// sort the tickets into priority order
+		usort($tickets, 'Codebase_Model_Ticket::sort');
+
+		return $tickets;
 	}
 
 	/**
 	 * getter for the project property
 	 *
 	 * @return	Codebase_Model_Project
+	 * @access	public
 	 */
 	public function get_project() {
 		return $this->project;
@@ -72,6 +79,8 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 	 * setter for the project property
 	 *
 	 * @param	Codebase_Model_Project	$project
+	 * @return	void
+	 * @access	public
 	 */
 	public function set_project(Codebase_Model_Project $project) {
 		$this->project = $project;
@@ -81,6 +90,7 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 	 * getter for the status property
 	 *
 	 * @return	Codebase_Model_Status
+	 * @access	public
 	 */
 	public function get_status() {
 		if(!$this->status instanceOf Codebase_Model_Status)
@@ -102,6 +112,7 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 	 * getter for the assignee property
 	 *
 	 * @return	Codebase_Model_Assignee
+	 * @access	public
 	 */
 	public function get_assignee() {
 		if(!$this->assignee instanceOf Codebase_Model_Assignee)
@@ -123,6 +134,7 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 	 * returns true if the ticket is open
 	 *
 	 * @return	boolean
+	 * @access	public
 	 */
 	public function is_open()
 	{
@@ -133,117 +145,41 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 	 * returns true if the ticket has a critical priority
 	 *
 	 * @return	boolean
+	 * @access	public
 	 */
 	public function is_critical()
 	{
 		return ($this->get_priority()->get_name() == 'Critical');
 	}
 
+	/**
+	 * returns an integer rused to determine the ticket's position within a
+	 * collection of tickets
+	 *
+	 * @return	int
+	 * @access	public
+	 */
 	public function get_ordinal()
 	{
-		$ordinal = 0;
-
-		/**
-		 * tested tickets are lowest priority, as the only work required on them
-		 * is deployment but they should still rise up the list as the release
-		 * date draws closer
-		 */
-		if($this->get_status()->get_name() == 'Tested')
-		{
-			$ordinal -= 100;
-		}
-
-		$score_priority_critical = 999;
-		$score_type_bug = 100;
-		$score_priority_high = 100;
-		$score_type_question = 90;
-		$score_type_change = 50;
-		$score_type_task = 50;
-		$score_priority_normal = 50;
-		$score_priority_low = 10;
-		$score_milestone_due_4_weeks = 10;
-		$score_milestone_due_3_weeks = 40;
-		$score_milestone_due_2_weeks = 90;
-		$score_milestone_due_1_week = 200;
-
-		// priority
-		switch(strtolower($this->get_priority()->get_name()))
-		{
-			case 'critical':
-				$ordinal += $score_priority_critical;
-				break;
-
-			case 'high':
-				$ordinal += $score_priority_high;
-				break;
-
-			case 'normal':
-				$ordinal += $score_priority_normal;
-				break;
-
-			case 'low':
-				$ordinal += $score_priority_low;
-				break;
-		}
-
-		// type
-		switch(strtolower($this->get_ticket_type()))
-		{
-			case 'bug':
-				$ordinal += $score_type_bug;
-				break;
-
-			case 'change':
-			case 'feature':
-				$ordinal += $score_type_change;
-				break;
-
-			case 'question':
-				$ordinal += $score_type_question;
-				break;
-
-			case 'task':
-				$ordinal += $score_type_task;
-				break;
-		}
-
-		// milestone due date
-		if($this->get_milestone() instanceOf Codebase_Model_Milestone)
-		{
-			$day = 86400;
-			$week = $day * 7;
-
-			$due_date = strtotime($this->get_milestone()->get_deadline());
-			$due_date_away = $due_date - time();
-
-			if($due_date_away < $week)
-			{
-				$ordinal += $score_milestone_due_1_week;
-			}
-			elseif($due_date_away < (2 * $week))
-			{
-				$ordinal += $score_milestone_due_2_weeks;
-			}
-			elseif($due_date_away < (3 * $week))
-			{
-				$ordinal += $score_milestone_due_3_weeks;
-			}
-			elseif($due_date_away < (4 * $week))
-			{
-				$ordinal += $score_milestone_due_4_weeks;
-			}
-		}
-
-		return $ordinal;
+		return $this->get_priority()->get_position();
 	}
 
+	/**
+	 * a function that is passed to PHP's usort function in order to determine
+	 * the correct order of an array of ticket objects
+	 *
+	 * @param	Codebase_Model_Ticket	$a
+	 * @param	Codebase_Model_Ticket	$b
+	 * @return	type
+	 * @static
+	 */
 	public static function sort(Codebase_Model_Ticket $a, Codebase_Model_Ticket $b)
 	{
 		$return_value = 0;
 
 		if($a->get_ordinal() != $b->get_ordinal())
 		{
-			$return_value = ($a->get_ordinal() > $b->get_ordinal()) ? -1 : 1;
+			$return_value = ($a->get_ordinal() < $b->get_ordinal()) ? -1 : 1;
 		}
 
 		return $return_value;

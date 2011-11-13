@@ -74,7 +74,8 @@ abstract class Codebase_Model_Core
 			'status' => 'Codebase_Model_Status',
 			'assignee' => 'Codebase_Model_Assignee',
 			'priority' => 'Codebase_Model_Priority',
-			'category' => 'Codebase_Model_Category'
+			'category' => 'Codebase_Model_Category',
+			//'milestone' => 'Codebase_Model_Milestone'
 		);
 		$elements_to_instantiate = array_keys($object_element_map);
 

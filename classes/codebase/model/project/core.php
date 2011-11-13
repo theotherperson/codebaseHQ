@@ -144,6 +144,30 @@ class Codebase_Model_Project_Core extends Codebase_Model
 	}
 
 	/**
+	 * Returns all tickets belonging to the project that are of the specified
+	 * type
+	 *
+	 * @param	string	$type_name
+	 * @return	array	A collection Codebase_Model_Ticket objects
+	 */
+	public function get_tickets_by_type($type_name)
+	{
+		$filtered_tickets = array();
+
+		$tickets = $this->get_tickets();
+
+		foreach($tickets as $ticket)
+		{
+			if($ticket->get_ticket_type() == $type_name)
+			{
+				$filtered_tickets[] = $ticket;
+			}
+		}
+
+		return $filtered_tickets;
+	}
+
+	/**
 	 * Returns all statuses belonging to the project
 	 *
 	 * @return	array	A collection Codebase_Model_Status objects

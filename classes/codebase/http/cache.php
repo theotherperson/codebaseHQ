@@ -63,8 +63,14 @@ class Codebase_HTTP_Cache extends HTTP_Cache
 				// If there is a s-maxage directive we can use that
 				$cache_control['max-age'] = $cache_control['s-maxage'];
 			}
-
 		}
+
+		/**
+		 * if the max-age cache control header is set to 0 in the response, set
+		 * it to 1 hour so the reponse will be cacheable
+		 */
+		$cache_control_header = $response->headers('Cache-Control');
+		$response->headers('Cache-Control', str_replace('max-age=0', 'max-age=3600', $cache_control_header));
 
 		if ($expires = Arr::get($headers, 'expires') AND ! isset($cache_control['max-age']))
 		{

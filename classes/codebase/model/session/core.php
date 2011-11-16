@@ -24,6 +24,9 @@ class Codebase_Model_Session_Core extends Codebase_Model
 	protected $ticket_id = NULL;
 	protected $milestone_id = NULL;
 
+	protected $project = NULL;
+	protected $ticket = NULL;
+
 	/**
 	 * static function to return all sessions belonging to the specified project
 	 *
@@ -39,6 +42,38 @@ class Codebase_Model_Session_Core extends Codebase_Model
 
 		// TODO: Shouldn't have to specify the child class here, should just be 'self' but need PHP 5.3 and Late Static Binding to achieve this
 		return self::get_objects_for_path($request, 'Codebase_Model_Session', $path);
+	}
+
+	/**
+	 * getter for the project property
+	 *
+	 * @return	Codebase_Model_Project
+	 * @access	public
+	 */
+	public function get_project() {
+		return $this->project;
+	}
+
+	/**
+	 * setter for the project property
+	 *
+	 * @param	Codebase_Model_Project	$project
+	 * @return	void
+	 * @access	public
+	 */
+	public function set_project(Codebase_Model_Project $project) {
+		$this->project = $project;
+	}
+
+
+	public function get_ticket()
+	{
+		if($this->ticket === NULL)
+		{
+			$this->ticket = $this->get_project()->get_ticket_by_id($this->get_ticket_id());
+		}
+
+		return $this->ticket;
 	}
 
 }

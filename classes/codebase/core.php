@@ -202,6 +202,19 @@ abstract class Codebase_Core
 		return $milestones;
 	}
 
+	public function get_all_sessions_between($start_date = NULL, $end_date = NULL)
+	{
+		$sessions = array();
+
+		$projects = $this->get_all_projects();
+		foreach($projects as $project)
+		{
+			$sessions = array_merge($sessions, $project->get_sessions_between($start_date, $end_date));
+		}
+
+		return $sessions;
+	}
+
 	/**
 	 * Getter for the $request property
 	 *

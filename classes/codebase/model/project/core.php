@@ -167,6 +167,21 @@ class Codebase_Model_Project_Core extends Codebase_Model
 		return $filtered_tickets;
 	}
 
+	public function get_ticket_by_id($id)
+	{
+		$tickets = $this->get_tickets();
+
+		foreach($tickets as $ticket)
+		{
+			if($ticket->get_ticket_id() == $id)
+			{
+				return $ticket;
+			}
+		}
+
+		return NULL;
+	}
+
 	/**
 	 * Returns all milestones belonging to the project
 	 *
@@ -252,7 +267,48 @@ class Codebase_Model_Project_Core extends Codebase_Model
 			$this->sessions = Codebase_Model_Session::get_sessions_for_project($this->get_request(), $this->get_permalink());
 		}
 
+		// add a reference back to self
+		foreach($this->sessions as $session)
+		{
+			$session->set_project($this);
+		}
+
 		return $this->sessions;
+	}
+
+	/**
+	 * Returns all sessions belonging to the project that took place between
+	 * the provided start and end dates
+	 *
+	 * @param	int		start date, unix timestamp
+	 * @param	int		end date, unix timestamp
+	 * @return	array	A collection Codebase_Model_Session objects
+	 */
+	public function get_sessions_between($start_date = NULL, $end_date = NULL)
+	{
+		$filtered_sessions = array();
+
+		if($start_date === NULL)
+		{
+			$start_date = 0;
+		}
+
+		if($end_date === NULL)
+		{
+			$end_date = time();
+		}
+
+		$sessions = $this->get_sessions();
+
+		foreach($sessions as $session)
+		{
+			if(strtotime($session->get_session_date()) >= $start_date AND strtotime($session->get_session_date()) <= $end_date)
+			{
+				$filtered_sessions[] = $session;
+			}
+		}
+
+		return $filtered_sessions;
 	}
 
 }

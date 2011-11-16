@@ -54,11 +54,18 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 	public static function get_tickets_for_project(Codebase_Request $request, $project_permalink)
 	{
 		$tickets = array();
+                $paged_tickets = array();
+                $page = 1;
 		$path = '/'.$project_permalink.'/tickets';
-
-		// TODO: Shouldn't have to specify the child class here, should just be 'self' but need PHP 5.3 and Late Static Binding to achieve this
-		$tickets = self::get_objects_for_path($request, 'Codebase_Model_Ticket', $path);
-
+                
+                $request->add_param('page', $page);
+                while(count($paged_tickets = self::get_objects_for_path($request, 'Codebase_Model_Ticket', $path)) > 0)
+                {
+                    $tickets = array_merge($tickets, $paged_tickets);
+                    $page++;
+                    $request->add_param('page', $page);
+                }
+                
 		// sort the tickets into priority order
 		usort($tickets, 'Codebase_Model_Ticket::sort');
 

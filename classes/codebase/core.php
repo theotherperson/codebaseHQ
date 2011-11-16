@@ -181,6 +181,28 @@ abstract class Codebase_Core
 	}
 
 	/**
+	 * Retrieves all milestones associated with the codebase account specified
+	 * by the credentials in the request object, only returns active milestones
+	 *
+	 * @return	array	A collection of Codebase_Model_Milestone objects
+	 */
+	public function get_all_active_milestones()
+	{
+		$milestones = array();
+
+		$projects = $this->get_all_projects();
+		foreach($projects as $project)
+		{
+			$milestones = array_merge($milestones, $project->get_active_milestones());
+		}
+
+		// sort the milestones into priority order
+		usort($milestones, 'Codebase_Model_Milestone::sort');
+
+		return $milestones;
+	}
+
+	/**
 	 * Getter for the $request property
 	 *
 	 * @access	public

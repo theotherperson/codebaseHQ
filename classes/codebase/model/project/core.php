@@ -168,21 +168,6 @@ class Codebase_Model_Project_Core extends Codebase_Model
 	}
 
 	/**
-	 * Returns all statuses belonging to the project
-	 *
-	 * @return	array	A collection Codebase_Model_Status objects
-	 */
-	public function get_statuses()
-	{
-		if($this->statuses === NULL)
-		{
-			$this->statuses = Codebase_Model_Status::get_statuses_for_project($this->get_request(), $this->get_permalink());
-		}
-
-		return $this->statuses;
-	}
-
-	/**
 	 * Returns all milestones belonging to the project
 	 *
 	 * @return	array	A collection Codebase_Model_Milestone objects
@@ -201,6 +186,43 @@ class Codebase_Model_Project_Core extends Codebase_Model
 		}
 
 		return $this->milestones;
+	}
+
+	/**
+	 * Returns all active milestones belonging to the project
+	 *
+	 * @return	array	A collection Codebase_Model_Milestone objects
+	 */
+	public function get_active_milestones()
+	{
+		$filtered_milestones = array();
+
+		$milestones = $this->get_milestones();
+
+		foreach($milestones as $milestone)
+		{
+			if($milestone->get_status() == 'active')
+			{
+				$filtered_milestones[] = $milestone;
+			}
+		}
+
+		return $filtered_milestones;
+	}
+
+	/**
+	 * Returns all statuses belonging to the project
+	 *
+	 * @return	array	A collection Codebase_Model_Status objects
+	 */
+	public function get_statuses()
+	{
+		if($this->statuses === NULL)
+		{
+			$this->statuses = Codebase_Model_Status::get_statuses_for_project($this->get_request(), $this->get_permalink());
+		}
+
+		return $this->statuses;
 	}
 
 	/**

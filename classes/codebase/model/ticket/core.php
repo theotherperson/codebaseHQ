@@ -34,6 +34,7 @@ class Codebase_Model_Ticket_Core extends Codebase_Model
 	protected $priority_id = NULL;
 	protected $status_id = NULL;
 	protected $milestone_id = NULL;
+	protected $tags = NULL;
 
 	/**
 	 * The project that this ticket belongs to
